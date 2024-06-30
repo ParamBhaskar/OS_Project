@@ -203,6 +203,7 @@ make tree
 ```sh
 make run
 ```
+![image](https://github.com/ParamBhaskar/OS_Project/assets/108367037/f2a6352b-1bb2-4b3b-b2f4-294188079dd1)
 
 ###  Running Mutithreaded Doctor's Office Simulation
 
@@ -217,8 +218,8 @@ cd Mutithreaded\ Doctor\'s\ Office\ Simulation/
 ```sh
 make all
 ```
-![Doctor's Office Simulation 1](https://ibb.co/N37D9qR)
-![Doctor's Office Simulation 2](https://ibb.co/S35QVz6)
+![os1](https://github.com/ParamBhaskar/OS_Project/assets/108367037/247bb539-bdd9-4ee2-a777-e77377d5f01d)
+![os2](https://github.com/ParamBhaskar/OS_Project/assets/108367037/8b94c6fe-e7fc-4679-9ed5-d5111684e73b)
 
 ###  Running Virtual Memory Simulation
 
@@ -235,6 +236,8 @@ cd Virtual\ Memory\ Simulation/
 ```sh
 make
 ```
+![image](https://github.com/ParamBhaskar/OS_Project/assets/108367037/f15f832b-0ad9-4405-8fc4-9b287727e2a0)
+![image](https://github.com/ParamBhaskar/OS_Project/assets/108367037/47cb4c51-4bd6-44d5-8288-6fd1b94f5176)
 
 ###  Cleaning .o files and IPCs used in System in any of the three Project Directory
 
