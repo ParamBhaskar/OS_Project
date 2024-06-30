@@ -236,6 +236,8 @@ cd Virtual\ Memory\ Simulation/
 ```sh
 make
 ```
+![image](https://github.com/ParamBhaskar/OS_Project/assets/108367037/f15f832b-0ad9-4405-8fc4-9b287727e2a0)
+![image](https://github.com/ParamBhaskar/OS_Project/assets/108367037/47cb4c51-4bd6-44d5-8288-6fd1b94f5176)
 
 ###  Cleaning .o files and IPCs used in System in any of the three Project Directory
 
