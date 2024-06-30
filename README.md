@@ -115,38 +115,38 @@ This project consists of three main components: **my custom Thread Library**, a 
 <details closed><summary>foothread - My Custom Thread Library</summary>
 
 | File                                                                                                                     | Summary                         |
-| ---                                                                                                                      | ---                             |
-| [foothread.c](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread - My Custom Thread Library/foothread.c)   | <code>► Contains the implementation of the custom thread library.</code> |
-| [computesum.c](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread - My Custom Thread Library/computesum.c) | <code>► Example program to compute tree sum using custom threads.</code> |
-| [makefile](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread - My Custom Thread Library/makefile)         | <code>► Example program to compute sum using custom threads.</code> |
-| [gentree.c](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread - My Custom Thread Library/gentree.c)       | <code>► Generates a tree structure for testing the thread library.</code> |
-| [foothread.h](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread - My Custom Thread Library/foothread.h)   | <code>► Header file for the custom thread library.</code> |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| [foothread.c](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread%20-%20My%20Custom%20Thread%20Library/foothread.c)   | <code>► Contains the implementation of the custom thread library.</code> |
+| [foothread.h](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread%20-%20My%20Custom%20Thread%20Library/foothread.h)   | <code>► Header file for the custom thread library.</code> |
+| [computesum.c](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread%20-%20My%20Custom%20Thread%20Library/computesum.c) | <code>► Example program to compute tree sum using custom threads.</code> |
+| [gentree.c](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread%20-%20My%20Custom%20Thread%20Library/gentree.c)       | <code>► Generates a tree structure for testing the thread library.</code> |
+| [makefile](https://github.com/ParamBhaskar/OS_Project/blob/main/foothread%20-%20My%20Custom%20Thread%20Library/makefile)         | <code>► Example program to compute sum using custom threads.</code> |
 
 </details>
 
-<details closed><summary>Mutithreaded Doctor's Office Simulation</summary>
+<details closed><summary>Multithreaded Doctor's Office Simulation</summary>
 
 | File                                                                                                                      | Summary                         |
-| ---                                                                                                                       | ---                             |
-| [event.h](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded Doctor's Office Simulation/event.h)         | <code>► Header file for event handling.</code> |
-| [session.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded Doctor's Office Simulation/session.c)     | <code>► Manages session activities.</code> |
-| [event.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded Doctor's Office Simulation/event.c)         | <code>► Implements event handling functions.</code> |
-| [arrival.txt](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded Doctor's Office Simulation/arrival.txt) | <code>► Sample arrival data for simulation.</code> |
-| [arrival.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded Doctor's Office Simulation/arrival.c)     | <code>► Manages visitor arrivals.</code> |
-| [makefile](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded Doctor's Office Simulation/makefile)       | <code>► Makefile to build the simulation.</code> |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| [arrival.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded%20Doctor's%20Office%20Simulation/arrival.c)     | <code>► Manages visitor arrivals.</code> |
+| [arrival.txt](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded%20Doctor's%20Office%20Simulation/arrival.txt) | <code>► Sample arrival data for simulation.</code> |
+| [event.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded%20Doctor's%20Office%20Simulation/event.c)         | <code>► Implements event handling functions.</code> |
+| [event.h](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded%20Doctor's%20Office%20Simulation/event.h)         | <code>► Header file for event handling.</code> |
+| [makefile](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded%20Doctor's%20Office%20Simulation/makefile)       | <code>► Makefile to build the simulation.</code> |
+| [session.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Mutithreaded%20Doctor's%20Office%20Simulation/session.c)     | <code>► Manages session activities.</code> |
 
 </details>
 
 <details closed><summary>Virtual Memory Simulation</summary>
 
 | File                                                                                                      | Summary                         |
-| ---                                                                                                       | ---                             |
-| [mmu.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual Memory Simulation/mmu.c)           | <code>► Manages memory unit operations.</code> |
-| [sched.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual Memory Simulation/sched.c)       | <code>► Handles process scheduling tasks.</code> |
-| [result.txt](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual Memory Simulation/result.txt) | <code>► Contains the simulation results.</code> |
-| [process.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual Memory Simulation/process.c)   | <code>► Implements process behaviors.</code> |
-| [master.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual Memory Simulation/master.c)     | <code>► Coordinates the master-slave architecture.</code> |
-| [makefile](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual Memory Simulation/makefile)     | <code>► Makefile to build the virtual memory simulation.</code> |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| [master.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual%20Memory%20Simulation/master.c)     | <code>► Coordinates the master-slave architecture.</code> |
+| [mmu.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual%20Memory%20Simulation/mmu.c)           | <code>► Manages memory unit operations.</code> |
+| [process.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual%20Memory%20Simulation/process.c)   | <code>► Implements process behaviors.</code> |
+| [result.txt](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual%20Memory%20Simulation/result.txt) | <code>► Contains the simulation results.</code> |
+| [sched.c](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual%20Memory%20Simulation/sched.c)       | <code>► Handles process scheduling tasks.</code> |
+| [makefile](https://github.com/ParamBhaskar/OS_Project/blob/main/Virtual%20Memory%20Simulation/makefile)     | <code>► Makefile to build the virtual memory simulation.</code> |
 
 </details>
 
