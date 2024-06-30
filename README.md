@@ -284,7 +284,7 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 
 ##  Acknowledgments
 
-- Special thanks to Prof. Abhijit Das for guidance and mentorship throughout the project.
+- Special thanks to Prof. Abhijit Das and Prof. Bivas Mitra for guidance and mentorship throughout the project.
 
 
 [**Return**](#quick-links)
