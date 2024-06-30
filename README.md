@@ -203,6 +203,7 @@ make tree
 ```sh
 make run
 ```
+![image](https://github.com/ParamBhaskar/OS_Project/assets/108367037/f2a6352b-1bb2-4b3b-b2f4-294188079dd1)
 
 ###  Running Mutithreaded Doctor's Office Simulation
 
