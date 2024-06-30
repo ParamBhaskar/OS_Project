@@ -220,7 +220,7 @@ cd Mutithreaded\ Doctor\'s\ Office\ Simulation/
 make all
 ```
 
-###  Running foothread - Virtual Memory Simulation
+###  Running Virtual Memory Simulation
 
 Use the following command to build and test foothread:
 
