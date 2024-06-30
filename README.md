@@ -214,15 +214,10 @@ make run
 cd Mutithreaded\ Doctor\'s\ Office\ Simulation/
 ```
 
-2. To Compile all the files and generate a random sample arrival.txt:
+2. To run the simulation:
 
 ```sh
-make
-```
-
-3. Run ./session to run the simulation:
-```sh
-./session
+make all
 ```
 
 ###  Running foothread - Virtual Memory Simulation
