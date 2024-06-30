@@ -292,6 +292,6 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 - Special thanks to Prof. Abhijit Das for guidance and mentorship throughout the project.
 
 
-[**Return**](#-quick-links)
+[**Return**](#quick-links)
 
 ---
