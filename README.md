@@ -217,6 +217,8 @@ cd Mutithreaded\ Doctor\'s\ Office\ Simulation/
 ```sh
 make all
 ```
+![Doctor's Office Simulation 1](https://ibb.co/N37D9qR)
+![Doctor's Office Simulation 2](https://ibb.co/S35QVz6)
 
 ###  Running Virtual Memory Simulation
 
