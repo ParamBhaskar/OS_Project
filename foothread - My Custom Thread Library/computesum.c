@@ -1,90 +1,129 @@
-#include "foothread.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include "foothread.h"
 
-typedef struct node {
+#define MAX_NODES 1000
+
+foothread_mutex_t mtx;
+
+typedef struct
+{
     int id;
-    int parent_id;
-    int num_children;
-    int sum;
-    foothread_mutex_t sum_mutex;
-} node_t;
+    int p;
+    int c[MAX_NODES];
+    int c_count;
+    int s;
+    foothread_barrier_t bar;
+} Node;
 
-int n; // Number of nodes
-node_t* nodes;
+Node **t;
 
-void* node_function(void* arg) {
-    node_t* node = (node_t*)arg;
 
-    if (node->num_children == 0) { // Leaf node
+int tmain(void *arg)
+{
+    Node *node = (Node *)arg;
+    int id = node->id;
+
+    if (node->c_count == 0)
+    {
+        foothread_mutex_lock(&mtx);
+        printf("Leaf node %d :: Enter a positive integer: ", id);
         int input;
-        printf("Leaf node %d :: Enter a positive integer: ", node->id);
         scanf("%d", &input);
+        node->s += input;
+        foothread_mutex_unlock(&mtx);
 
-        foothread_mutex_lock(&nodes[node->parent_id].sum_mutex);
-        nodes[node->parent_id].sum += input;
-        printf("Internal node %d gets the partial sum %d from its children\n", node->parent_id, input);
-        foothread_mutex_unlock(&nodes[node->parent_id].sum_mutex);
+        Node *p = t[node->p];
+        foothread_barrier_wait(&(p->bar));
+    }
+    else if (node->p == -1)
+    {
+        foothread_barrier_wait(&(node->bar));
+
+        foothread_mutex_lock(&mtx);
+        for (int i = 0; i < node->c_count; i++)
+        {
+            node->s += t[(node->c)[i]]->s;
+        }
+        printf("Internal node %d gets the partial sum %d from its children\n", id, node->s);
+        printf("Sum at root (node %d) = %d\n", id, node->s);
+        foothread_mutex_unlock(&mtx);
+    }
+    else
+    {
+        foothread_barrier_wait(&(node->bar));
+
+        foothread_mutex_lock(&mtx);
+        for (int i = 0; i < node->c_count; i++)
+        {
+            node->s += t[(node->c)[i]]->s;
+        }
+        printf("Internal node %d gets the partial sum %d from its children\n", id, node->s);
+        foothread_mutex_unlock(&mtx);
+
+        Node *p = t[node->p];
+        foothread_barrier_wait(&(p->bar));
     }
 
-    foothread_barrier_wait(&barrier);
-    
-    // Call foothread_exit() for synchronization at the end
     foothread_exit();
-    return NULL;
+    return 0;
 }
 
-int main(int argc, char* argv[]) {
-    FILE* file = fopen("tree.txt", "r");
-    if (!file) {
+int main()
+{
+    t = (Node **)malloc(MAX_NODES * sizeof(Node *));
+    FILE *file = fopen("tree.txt", "r");
+    if (file == NULL)
+    {
         perror("Error opening file");
         exit(EXIT_FAILURE);
     }
 
+    int n;
     fscanf(file, "%d", &n);
 
-    nodes = (node_t*)malloc(n * sizeof(node_t));
-    int* children_counts = (int*)calloc(n, sizeof(int)); // Temporary array to count children
-
-    for (int i = 0; i < n; i++) {
-        fscanf(file, "%d %d", &nodes[i].id, &nodes[i].parent_id);
-        nodes[i].sum = 0;
-        foothread_mutex_init(&nodes[i].sum_mutex);
-        if (i != nodes[i].parent_id) { // Avoid counting the root node as its own child
-            children_counts[nodes[i].parent_id]++;
-        }
+    for (int i = 0; i < n; i++)
+    {
+        t[i] = (Node *)malloc(sizeof(Node));
+        t[i]->c_count = 0;
+        t[i]->s = 0;
+        t[i]->id = i;
+        t[i]->p = -1;
     }
 
-    // Initialize num_children for each node
-    for (int i = 0; i < n; i++) {
-        nodes[i].num_children = children_counts[i];
+    for (int i = 0; i < n; i++)
+    {
+        int curr_node, p;
+        fscanf(file, "%d %d", &curr_node, &p);
+
+        if (p == curr_node)
+            continue;
+
+        t[curr_node]->p = p;
+        t[p]->c_count++;
+        t[p]->c[t[p]->c_count - 1] = curr_node;
     }
 
-    free(children_counts);
     fclose(file);
 
-    foothread_barrier_t barrier;
-    foothread_barrier_init(&barrier, n);
-
     foothread_t threads[n];
-    for (int i = 0; i < n; i++) {
-        foothread_create(&threads[i], NULL, node_function, (void*)&nodes[i]);
+    foothread_mutex_init(&mtx);
+
+    for (int i = 0; i < n; i++)
+    {
+        foothread_barrier_init(&(t[i]->bar), t[i]->c_count + 1);
+        foothread_create(&threads[i], NULL, tmain, (void *)t[i]);
     }
 
-    // Wait for all threads to finish
-    for (int i = 0; i < n; i++) {
-        foothread_join(threads[i], NULL);
-    }
+    foothread_exit();
+    foothread_mutex_destroy(&mtx);
 
-    printf("Sum at root (node %d) = %d\n", nodes[0].id, nodes[0].sum);
-
-    // Clean up
-    foothread_barrier_destroy(&barrier);
-    for (int i = 0; i < n; i++) {
-        foothread_mutex_destroy(&nodes[i].sum_mutex);
+    for (int i = 0; i < n; i++)
+    {
+        foothread_barrier_destroy(&(t[i]->bar));
+        free(t[i]);
     }
-    free(nodes);
+    free(t);
 
     return 0;
 }

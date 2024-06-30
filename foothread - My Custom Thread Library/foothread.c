@@ -1,156 +1,193 @@
 #include "foothread.h"
 
+static struct sembuf w, sig;
+
+// Helper function to initialize semaphore
+static int initialize_semaphore(int *semaphore, int val) {
+    *semaphore = semget(IPC_PRIVATE, 1, 0777 | IPC_CREAT);
+    if (*semaphore == -1) {
+        perror("Error creating semaphore");
+        exit(EXIT_FAILURE);
+    }
+    if (semctl(*semaphore, 0, SETVAL, val) == -1) {
+        perror("Error initializing semaphore");
+        exit(EXIT_FAILURE);
+    }
+    return 0;
+}
+
+static void sembuf_init() {
+    sig.sem_num = 0;
+    sig.sem_flg = 0;
+    sig.sem_op = 1;
+
+    w.sem_num = 0;
+    w.sem_flg = 0;
+    w.sem_op = -1;
+}
+
+// Helper function to perform semaphore operations
+static void perform_semaphore_operation(int semaphore, struct sembuf *operation) {
+    if (semop(semaphore, operation, 1) == -1) {
+        perror("Semaphore operation failed");
+        exit(EXIT_FAILURE);
+    }
+}
+
+
 void foothread_attr_setjointype(foothread_attr_t *attr, int i)
 {
-    attr->join_type = FOOTHREAD_JOINABLE;
-    nojthreads++;
+    attr->join_type = i;
+    // nojthreads++;
 }
 void foothread_attr_setstacksize(foothread_attr_t *attr, int i)
 {
     attr->stack_size = i;
 }
 
-void foothread_create(foothread_t *thread, foothread_attr_t *attr, int (*start_routine)(void *), void *arg)
+
+static foothread_info_t t_details [FOOTHREAD_THREADS_MAX];
+static int cnt = 0;
+
+int foothread_create(foothread_t *thread, foothread_attr_t *attr, int (*start_routine)(void *), void *arg)
 {
-    size_t stack_size = FOOTHREAD_DEFAULT_STACK_SIZE;
-    if (attr != NULL)
+    if (cnt >= FOOTHREAD_THREADS_MAX)
     {
-        if (attr->stack_size > 0)
-            stack_size = attr->stack_size;
+        perror("Maximum Number of Threads Exceeded");
+        return -1;
     }
 
-    void *stack = malloc(stack_size);
-    if (stack == NULL)
-    {
-        perror("malloc");
-        exit(EXIT_FAILURE);
-    }
-
-    if (semmade == 0)
-    {
-        // Initialize the semaphore
-        if (sem_init(&semid, 0, 0) == -1)
-        {
-            perror("sem_init");
-            exit(EXIT_FAILURE);
-        }
-
-        semmade = 1;
-    }
-
+    // Use default attributes if not provided
     if (attr == NULL)
     {
-        attr->join_type = FOOTHREAD_DETACHED;
-        attr->stack_size = FOOTHREAD_DEFAULT_STACK_SIZE;
+        attr = (foothread_attr_t *)malloc(sizeof(foothread_attr_t));
+        foothread_attr_setjointype(attr, FOOTHREAD_JOINABLE);
+        foothread_attr_setstacksize(attr, FOOTHREAD_DEFAULT_STACK_SIZE);
     }
 
-    pid_t tid = clone(start_routine, stack + stack_size, CLONE_VM | SIGCHLD, arg);
+    // flags for clone()
+    int flags = CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_THREAD;
+
+    // Allocate stack
+    void *st = malloc(attr->stack_size);
+    if (st == NULL)
+    {
+        perror("malloc failed");
+        return -1;
+    }
+
+    // Call clone() to create the thread
+    int tid = clone(start_routine, (char *)st + attr->stack_size, flags, arg);
     if (tid == -1)
     {
-        perror("clone");
-        exit(EXIT_FAILURE);
+        perror("clone failed");
+        free(st);
+        return -1;
     }
 
     if (thread != NULL)
-    {
-        // Store thread data
-        // ...
-        nojthreads++;
-    }
-}
+        thread->dummy = tid;
 
-void foothread_exit()
-{
-    // if leader then
-    // while(joinablethds){
-    //     p();
-    //     joinablethds--;
-    // }
-    if (gettid() == getpid())
-    {
-        while (nojthreads > 0)
-        {
-            /* code */
-            sem_wait(&semid);
-            nojthreads--;
-        }
-    }
-    else
-    {
-        sem_post(&semid);
-    }
-    exit(0);
-}
+    t_details[cnt].tid = tid;
+    t_details[cnt].join_type = attr->join_type;
+    cnt++;
 
-static int get_thread_id()
-{
-    return syscall(SYS_gettid);
+    return 0;
 }
 
 void foothread_mutex_init(foothread_mutex_t *mutex)
 {
-    sem_init(&mutex->lock, 0, 1);      // Initially unlocked
-    sem_init(&mutex->wait_lock, 0, 1); // Controls access
-    mutex->is_locked = 0;
-    mutex->lock_count = 0;
+    sembuf_init();
+    mutex->p = 0;
+    initialize_semaphore(&(mutex->s),1);
 }
 
 void foothread_mutex_lock(foothread_mutex_t *mutex)
 {
-    sem_wait(&mutex->wait_lock); // Ensure exclusive access to lock
-    if (mutex->lock_count == 0)
-    {
-        sem_wait(&mutex->lock); // Lock the mutex if it's the first lock call
-    }
-    mutex->lock_count++; // Increment lock count
-    mutex->is_locked = 1;
-    sem_post(&mutex->wait_lock); // Release exclusive access
+    perform_semaphore_operation(mutex->s, &w);
+    mutex->p = gettid();
 }
 
 void foothread_mutex_unlock(foothread_mutex_t *mutex)
 {
-    sem_wait(&mutex->wait_lock); // Ensure exclusive access to unlock
-    mutex->lock_count--;         // Decrement lock count
-    if (mutex->lock_count == 0)
+    if (mutex->p == gettid())
     {
-        mutex->is_locked = 0;
-        sem_post(&mutex->lock); // Unlock the mutex if it's the last unlock call
+        mutex->p = 0;
+        perform_semaphore_operation(mutex->s, &sig);
     }
-    sem_post(&mutex->wait_lock); // Release exclusive access
+    else
+    {
+        perror("Attempt to unlock mutex by another thread");
+        exit(EXIT_FAILURE);
+    }
 }
 
 void foothread_mutex_destroy(foothread_mutex_t *mutex)
 {
-    sem_destroy(&mutex->lock);
-    sem_destroy(&mutex->wait_lock);
-    // Note: Make sure the mutex is fully unlocked and not in use before destroying
+    semctl(mutex->s, 0, IPC_RMID, 0);
 }
 
 void foothread_barrier_init(foothread_barrier_t *barrier, int count)
 {
-    barrier->count = count;
+    sembuf_init();
+    barrier->count = 0;
     barrier->max = count;
-    sem_init(&barrier->barrier_sem, 0, 0); // Initially locked, to be unlocked when count reaches 0
-    sem_init(&barrier->wait_sem, 0, 1);    // Controls access to the count variable
+    initialize_semaphore(&(barrier->barrier_sem), 0);
+    initialize_semaphore(&(barrier->wait_sem), 1);
 }
 
 void foothread_barrier_wait(foothread_barrier_t *barrier)
 {
-    sem_wait(&barrier->wait_sem); // Lock to decrement count safely
-    if (--barrier->count == 0)
+    perform_semaphore_operation(barrier->wait_sem, &w);
+
+    barrier->count++;
+    if (barrier->count >= barrier->max)
     {
-        // Last thread to reach the barrier, unlock barrier_sem count times to release all threads
-        for (int i = 0; i < barrier->max; ++i)
+        for (int i = 0; i < barrier->max - 1; ++i)
         {
-            sem_post(&barrier->barrier_sem);
+            perform_semaphore_operation(barrier->barrier_sem, &sig);
         }
+        barrier->count = 0;
+        perform_semaphore_operation(barrier->wait_sem, &sig);
     }
-    sem_post(&barrier->wait_sem);    // Release lock on count
-    sem_wait(&barrier->barrier_sem); // Wait until barrier_sem is unlocked
+    else
+    {
+        perform_semaphore_operation(barrier->wait_sem, &sig);
+        perform_semaphore_operation(barrier->barrier_sem, &w);
+    }
 }
 
 void foothread_barrier_destroy(foothread_barrier_t *barrier)
 {
-    sem_destroy(&barrier->barrier_sem);
-    sem_destroy(&barrier->wait_sem);
+    semctl(barrier->barrier_sem, 0, IPC_RMID, 0);
+    semctl(barrier->wait_sem, 0, IPC_RMID, 0);
+}
+
+static int exit_semaphore;
+void foothread_exit()
+{
+    if (getpid() == gettid())
+    {
+        // leader thread
+        initialize_semaphore(&exit_semaphore, 0);
+        for (int i = 0; i < cnt; i++)
+        {
+            if (t_details[i].join_type == FOOTHREAD_JOINABLE)
+            perform_semaphore_operation(exit_semaphore, &w);
+        }
+        semctl(exit_semaphore, 0, IPC_RMID, 0);
+    }
+    else
+    {
+        // non-leader thread
+        for (int i = 0; i < cnt; i++)
+        {
+            if (t_details[i].tid == gettid())
+            {
+                if (t_details[i].join_type == FOOTHREAD_JOINABLE)
+                    perform_semaphore_operation(exit_semaphore, &sig);
+                break;
+            }
+        }
+    }
 }

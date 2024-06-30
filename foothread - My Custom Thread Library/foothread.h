@@ -11,19 +11,20 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <sys/syscall.h>
-#include <semaphore.h>
 
 #define FOOTHREAD_THREADS_MAX 128
 #define FOOTHREAD_DEFAULT_STACK_SIZE 2097152
 #define FOOTHREAD_JOINABLE 0
 #define FOOTHREAD_DETACHED 1
-static int nojthreads=0;
 
-sem_t semid;
 
-static int semmade=0;
+// static int semmade=0;
 // static pid_t ltid;
 
+typedef struct {
+    int dummy; // Placeholder for thread data
+    // int joinablechld=0;
+} foothread_t;
 
 typedef struct {
     int join_type;
@@ -35,10 +36,6 @@ void foothread_attr_setstacksize ( foothread_attr_t * , int ) ;
 
 #define FOOTHREAD_ATTR_INITIALIZER {FOOTHREAD_JOINABLE, FOOTHREAD_DEFAULT_STACK_SIZE}
 
-typedef struct {
-    int dummy; // Placeholder for thread data
-    // int joinablechld=0;
-} foothread_t;
 
 typedef struct {
     int barrier_sem;
@@ -47,14 +44,21 @@ typedef struct {
     int max;
 } foothread_barrier_t;
 
-typedef struct foothread_mutex_t {
-    int lock; 
-    int wait_lock; 
-    int is_locked; 
-    int lock_count; 
+typedef struct
+{
+    pid_t tid;
+    int join_type;
+} foothread_info_t;
+
+typedef struct
+{
+    int s;
+    pid_t p;
 } foothread_mutex_t;
 
-void foothread_create(foothread_t *thread, foothread_attr_t *attr, int (*start_routine)(void *), void *arg);
+
+
+int foothread_create(foothread_t *, foothread_attr_t *, int (*)(void *), void *);
 
 void foothread_exit();
 
