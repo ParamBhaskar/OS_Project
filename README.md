@@ -31,9 +31,7 @@
 >   - [Installation](#installation)
 >   - [Running OS_Project](#running-os_project)
 >   - [Tests](#tests)
-> - [Project Roadmap](#project-roadmap)
 > - [Contributing](#contributing)
-> - [License](#license)
 > - [Acknowledgments](#acknowledgments)
 
 ---
@@ -176,6 +174,7 @@ git clone https://github.com/ParamBhaskar/OS_Project
 ```sh
 cd OS_Project
 ```
+###  Running OS_Project
 
 ###  Running foothread - My Custom Thread Library
 
