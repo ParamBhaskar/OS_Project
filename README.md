@@ -30,7 +30,6 @@
 > - [Getting Started](#getting-started)
 >   - [Installation](#installation)
 >   - [Running OS_Project](#running-os_project)
->   - [Tests](#tests)
 > - [Contributing](#contributing)
 > - [Acknowledgments](#acknowledgments)
 
